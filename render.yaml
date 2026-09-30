@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: recipe-zip
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: YOUTUBE_API_KEY
+        sync: false
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: moonshotai/kimi-k2.6

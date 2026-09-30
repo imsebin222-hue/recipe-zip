@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe Zip</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gowun+Dodum&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <main class="container">
+        <section id="home-screen" class="screen hero-screen">
+            <p class="eyebrow">YOUTUBE RECIPE ORGANIZER</p>
+            <h1>RECIPE <em>ZIP</em></h1>
+            <h2>요리하면서 레시피 영상<br>일시정지 몇 번 하세요?</h2>
+            <p class="description">유튜브 링크만 넣으면<br>레시피만 쏙 뽑아드릴게요.</p>
+            <div class="input-area">
+                <label class="sr-only" for="youtube-url">유튜브 링크</label>
+                <input type="url" placeholder="유튜브 링크를 입력하세요" id="youtube-url">
+                <button id="recipe-button" type="button">레시피 만들기 <span>→</span></button>
+            </div>
+            <p id="request-message" class="demo-note">YouTube 링크를 분석해 레시피로 정리합니다.</p>
+        </section>
+
+        <section id="recipe-screen" class="screen recipe-screen" hidden>
+            <button class="back-button" type="button" data-go-home>← 새 영상 입력</button>
+            <article class="recipe-card">
+                <img id="recipe-thumbnail" class="thumbnail" src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=1200&q=85" alt="레시피 영상 썸네일">
+                <div class="recipe-content">
+                    <p class="eyebrow">TODAY'S RECIPE</p>
+                    <h2 id="recipe-title">매콤한 토마토<br>원팬 파스타</h2>
+                    <div class="recipe-meta"><span id="recipe-servings">2인분</span><span id="recipe-time">⏱ 20분</span></div>
+                    <section class="recipe-section">
+                        <h3>🛒 재료</h3>
+                        <ul id="ingredients" class="ingredients">
+                            <li><span>스파게티면</span><strong>160g</strong></li><li><span>방울토마토</span><strong>12개</strong></li><li><span>마늘</span><strong>4쪽</strong></li><li><span>토마토소스</span><strong>300g</strong></li><li><span>올리브오일 · 소금 · 후추</span><strong>약간</strong></li>
+                        </ul>
+                    </section>
+                    <section class="recipe-section">
+                        <h3>👩‍🍳 조리 순서</h3>
+                        <ol id="steps-preview" class="steps-preview"><li>마늘과 방울토마토를 손질해 준비해요.</li><li>팬에 마늘을 볶아 향을 내요.</li><li>소스, 물, 면을 넣고 10분간 끓여요.</li><li>치즈와 후추를 뿌려 마무리해요.</li></ol>
+                    </section>
+                    <button id="start-cooking" class="primary-button" type="button">🍳 요리 시작하기</button>
+                </div>
+            </article>
+        </section>
+
+        <section id="cooking-screen" class="screen cooking-screen" hidden>
+            <header class="cooking-header"><button class="close-button" type="button" data-go-recipe aria-label="레시피로 돌아가기">×</button><p id="cooking-recipe-title">매콤한 토마토 원팬 파스타</p><span id="step-count">01 / 04</span></header>
+            <div class="progress"><span id="progress-bar"></span></div>
+            <article class="step-card"><p class="step-label" id="step-label">STEP 01</p><h2 id="step-title">재료를 준비해요</h2><p id="step-text">마늘은 편으로 썰고, 방울토마토는 반으로 잘라주세요.</p><div class="tip-box" id="step-tip">TIP · 마늘의 꼭지는 미리 제거하면 편해요.</div></article>
+            <nav class="step-controls" aria-label="조리 단계 이동"><button id="prev-step" class="secondary-button" type="button">← 이전</button><button id="next-step" class="primary-button" type="button">다음 단계 →</button></nav>
+        </section>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
