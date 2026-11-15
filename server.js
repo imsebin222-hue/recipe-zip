@@ -160,7 +160,7 @@ app.post("/api/recipes", async (req, res) => {
     });
     const completion = await client.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      max_tokens: 6000,
+      max_tokens: 2000,
       reasoning: { effort: "low", exclude: true },
       messages: [{
         role: "user",
