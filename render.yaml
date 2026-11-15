@@ -10,5 +10,7 @@ services:
         sync: false
       - key: OPENROUTER_API_KEY
         sync: false
+      - key: APP_ACCESS_PASSWORD
+        sync: false
       - key: OPENAI_MODEL
         value: moonshotai/kimi-k2.6

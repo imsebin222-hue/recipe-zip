@@ -27,6 +27,6 @@ YouTube 요리 영상의 자막을 OpenRouter를 통해 구조화해 레시피 �
 
 이 앱은 `/api/recipes`를 제공하는 Node 서버가 필요하므로 GitHub Pages만으로는 동작하지 않습니다. 저장소를 GitHub에 올린 뒤 Render에서 **New → Blueprint**로 저장소를 연결하면 `render.yaml` 설정으로 웹 서비스를 만들 수 있습니다. 배포 완료 후 Render가 제공하는 `https://…onrender.com` 주소를 공유하면 누구나 접속할 수 있습니다.
 
-Blueprint 생성 중 `YOUTUBE_API_KEY`와 `OPENROUTER_API_KEY`를 입력하세요. 두 키는 Render의 환경 변수로만 저장하고 GitHub에는 올리지 마세요. 로컬 `.env` 파일도 커밋하지 않습니다. Render는 이 서비스를 외부에 공개하므로 공유 링크를 가진 누구나 API를 호출할 수 있고, API 사용량은 설정한 키의 계정에 청구됩니다. 각 서비스 콘솔에서 사용량 한도와 키 제한을 설정하세요.
+Blueprint 생성 중 `YOUTUBE_API_KEY`, `OPENROUTER_API_KEY`, `APP_ACCESS_PASSWORD`를 입력하세요. `APP_ACCESS_PASSWORD`는 다른 서비스에서 재사용하지 않는 긴 비밀번호로 설정합니다. 앱 페이지와 API 모두 HTTP Basic Auth로 보호되며, 접속할 때 사용자 이름은 `recipezip`, 비밀번호는 설정한 값입니다. 모든 값은 Render 환경 변수로만 저장하고 GitHub에는 올리지 마세요. 로컬 `.env` 파일도 커밋하지 않습니다. YouTube/OpenRouter 사용량은 설정한 키의 계정에 청구되므로 각 서비스 콘솔에서 사용량 한도와 키 제한을 설정하세요.
 
 Render 무료 플랜은 유휴 상태 후 잠들 수 있어 첫 요청이 늦어질 수 있습니다. [Render Blueprint 문서](https://render.com/docs/blueprint-spec)

@@ -1,4 +1,5 @@
 import "dotenv/config";
+import { timingSafeEqual } from "node:crypto";
 import express from "express";
 import OpenAI from "openai";
 import { YoutubeTranscript, YoutubeTranscriptNotAvailableLanguageError } from "youtube-transcript";
@@ -7,8 +8,33 @@ const app = express();
 const port = Number(process.env.PORT || 3000);
 const host = process.env.HOST || "0.0.0.0";
 const aiApiKey = process.env.OPENROUTER_API_KEY || process.env.OPENAI_API_KEY;
+const appAccessPassword = process.env.APP_ACCESS_PASSWORD;
+
+if (process.env.NODE_ENV === "production" && !appAccessPassword) {
+  throw new Error("운영 환경변수에 APP_ACCESS_PASSWORD를 설정해주세요.");
+}
 
 app.use(express.json({ limit: "16kb" }));
+app.use((req, res, next) => {
+  if (!appAccessPassword) return next();
+
+  const authorization = req.get("authorization") || "";
+  const [scheme, encodedCredentials] = authorization.split(" ", 2);
+  if (scheme === "Basic" && encodedCredentials) {
+    const credentials = Buffer.from(encodedCredentials, "base64").toString("utf8");
+    const separator = credentials.indexOf(":");
+    const username = separator >= 0 ? credentials.slice(0, separator) : "";
+    const password = separator >= 0 ? credentials.slice(separator + 1) : "";
+    const expected = Buffer.from(appAccessPassword);
+    const supplied = Buffer.from(password);
+    if (username === "recipezip" && expected.length === supplied.length && timingSafeEqual(expected, supplied)) {
+      return next();
+    }
+  }
+
+  res.set("WWW-Authenticate", 'Basic realm="Recipe Zip", charset="UTF-8"');
+  res.status(401).send("Recipe Zip에 접속하려면 비밀번호가 필요합니다.");
+});
 app.use(express.static("."));
 
 function getVideoId(url) {
