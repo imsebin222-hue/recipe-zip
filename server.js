@@ -59,6 +59,9 @@ const recipeSchema = {
 };
 
 function parseRecipe(content) {
+  if (typeof content !== "string" || !content.trim()) {
+    throw new Error("AI 응답이 비어 있습니다. 다시 시도해주세요.");
+  }
   const fencedJson = content.match(/```(?:json)?\s*([\s\S]*?)```/i)?.[1];
   const jsonObject = content.match(/\{[\s\S]*\}/)?.[0];
   return JSON.parse((fencedJson || jsonObject || content).trim());
@@ -134,7 +137,7 @@ function getPublicError(error) {
   if (error?.status === 429) return "요청이 많습니다. 잠시 후 다시 시도해주세요.";
   if (error?.name === "YoutubeTranscriptDisabledError") return "이 영상은 자막이 꺼져 있어 레시피를 만들 수 없습니다. 자막이 있는 영상을 선택해주세요.";
   if (error?.name === "YoutubeTranscriptTooManyRequestError") return "YouTube 자막 요청이 잠시 제한되었습니다. 조금 뒤 다시 시도해주세요.";
-  if (error?.message?.startsWith("AI가 완성된 레시피")) return error.message;
+  if (error?.message?.startsWith("AI가 완성된 레시피") || error?.message?.startsWith("AI 응답이 비어")) return error.message;
   return "레시피를 만드는 중 문제가 발생했습니다. 다른 자막 영상을 시도해주세요.";
 }
 
@@ -157,14 +160,19 @@ app.post("/api/recipes", async (req, res) => {
     });
     const completion = await client.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
-      max_tokens: 2500,
+      max_tokens: 6000,
+      reasoning: { effort: "low", exclude: true },
       messages: [{
         role: "user",
         content: `다음 유튜브 요리 영상 ${source.type}을 한국어 레시피로 정리해. 댓글을 사용하는 경우 [영상 업로더 댓글]을 최우선으로 신뢰해. 출처에 없는 수치나 재료는 추측하지 말고 \"영상 확인 필요\"로 표시해. 조리 단계는 3~8개로 간결하게 만들어.\n\n반드시 아래 형태의 유효한 JSON 객체 하나만 반환해. 설명 문장, Markdown, **, 코드 블록은 절대 쓰지 마.\n{"title":"요리 이름","servings":"2인분","cookingTime":"20분","ingredients":[{"name":"재료","amount":"분량"}],"steps":[{"title":"단계 제목","description":"조리 설명","tip":"팁"}]}\n\n영상 제목: ${video.title}\n\n${source.type}:\n${source.text}`
       }],
       response_format: { type: "json_object" }
     });
-    const recipe = validateRecipe(parseRecipe(completion.choices[0]?.message?.content || ""));
+    const choice = completion.choices[0];
+    if (!choice?.message?.content) {
+      console.error("AI returned no recipe content", { finishReason: choice?.finish_reason, model: completion.model });
+    }
+    const recipe = validateRecipe(parseRecipe(choice?.message?.content));
     res.json({ videoId, video, recipe, sourceType: source.type });
   } catch (error) {
     console.error(error);
