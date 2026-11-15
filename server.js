@@ -161,10 +161,10 @@ app.post("/api/recipes", async (req, res) => {
     const completion = await client.chat.completions.create({
       model: process.env.OPENAI_MODEL || "gpt-4.1-mini",
       max_tokens: 2000,
-      reasoning: { effort: "low", exclude: true },
+      reasoning: { effort: "none", exclude: true },
       messages: [{
         role: "user",
-        content: `다음 유튜브 요리 영상 ${source.type}을 한국어 레시피로 정리해. 댓글을 사용하는 경우 [영상 업로더 댓글]을 최우선으로 신뢰해. 출처에 없는 수치나 재료는 추측하지 말고 \"영상 확인 필요\"로 표시해. 조리 단계는 3~8개로 간결하게 만들어.\n\n반드시 아래 형태의 유효한 JSON 객체 하나만 반환해. 설명 문장, Markdown, **, 코드 블록은 절대 쓰지 마.\n{"title":"요리 이름","servings":"2인분","cookingTime":"20분","ingredients":[{"name":"재료","amount":"분량"}],"steps":[{"title":"단계 제목","description":"조리 설명","tip":"팁"}]}\n\n영상 제목: ${video.title}\n\n${source.type}:\n${source.text}`
+        content: `다음 유튜브 요리 영상 ${source.type}으로 간결한 한국어 레시피를 만들어. 댓글을 쓰면 [영상 업로더 댓글]을 우선해. 출처에 없는 재료나 수치는 추측하지 말고 \"영상 확인 필요\"로 표시해. 조리 단계는 3~5개, 설명과 팁은 짧게 써.\n\n아래 형식의 JSON 객체만 반환해. 설명, Markdown, 코드 블록은 쓰지 마.\n{"title":"요리 이름","servings":"2인분","cookingTime":"20분","ingredients":[{"name":"재료","amount":"분량"}],"steps":[{"title":"단계 제목","description":"조리 설명","tip":"팁"}]}\n\n영상 제목: ${video.title}\n\n${source.type}:\n${source.text.slice(0, 16000)}`
       }],
       response_format: { type: "json_object" }
     });
